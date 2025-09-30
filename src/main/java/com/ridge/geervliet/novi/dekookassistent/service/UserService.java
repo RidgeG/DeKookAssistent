@@ -1,12 +1,10 @@
 package com.ridge.geervliet.novi.dekookassistent.service;
 
-
 import com.ridge.geervliet.novi.dekookassistent.dto.input.UserInputDto;
 import com.ridge.geervliet.novi.dekookassistent.exception.ResourceNotFoundException;
 import com.ridge.geervliet.novi.dekookassistent.model.User;
 import com.ridge.geervliet.novi.dekookassistent.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,15 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
-
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -31,15 +26,15 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User createUser(UserInputDto inputDto) {
+    public void createUser(UserInputDto inputDto) {
         User newUser = new User();
         newUser.setFirstName(inputDto.getFirstName());
         newUser.setLastName(inputDto.getLastName());
         newUser.setUsername(inputDto.getUsername());
         newUser.setPassword(passwordEncoder.encode(inputDto.getPassword()));
         newUser.setEmail(inputDto.getEmail());
-        newUser.setRole(inputDto.getRole()!= null? inputDto.getRole() : User.Role.USER);
-        return userRepository.save(newUser);
+        newUser.setRole(inputDto.getRole() != null ? inputDto.getRole() : User.Role.USER);
+        userRepository.save(newUser);
     }
 
     public List<User> getAllUsers() {
@@ -49,7 +44,6 @@ public class UserService implements UserDetailsService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
-
     }
 
     public void deleteUser(Long id) {
@@ -58,7 +52,6 @@ public class UserService implements UserDetailsService {
         }
         userRepository.deleteById(id);
     }
-
 
     @Transactional
     public void deleteByUsername(String username) {
